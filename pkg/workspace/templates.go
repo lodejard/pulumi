@@ -20,6 +20,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 
@@ -28,7 +29,6 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 
 	"github.com/pkg/errors"
-	"github.com/pulumi/pulumi/pkg/tokens"
 	"github.com/pulumi/pulumi/pkg/util/contract"
 	"github.com/pulumi/pulumi/pkg/util/gitutil"
 )
@@ -375,9 +375,13 @@ func GetTemplateDir() (string, error) {
 	return dir, nil
 }
 
+var (
+	packageNameRegexp = regexp.MustCompile("^[A-Za-z0-9_.-]{1,100}$")
+)
+
 // IsValidProjectName returns true if the project name is a valid name.
 func IsValidProjectName(name string) bool {
-	return tokens.IsPackageName(name)
+	return packageNameRegexp.MatchString(name)
 }
 
 // ValueOrSanitizedDefaultProjectName returns the value or a sanitized valid project name
